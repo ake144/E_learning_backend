@@ -2,8 +2,8 @@ const courseModel = require('../model/course_model');
 
 // Create a new course
 async function createCourse(req, res) {
-    const { title, level, language, duration, trending, price, old_price,content,category_id, user_id} = req.body;
-    const newCourseId = await courseModel.createCourse(title, level, language, duration, trending, price, old_price, content, category_id, user_id);
+    const { title, level, language, duration,image_url,short_video_url,trending, price, old_price,content,category_id, user_id} = req.body;
+    const newCourseId = await courseModel.createCourse(image_url,short_video_url,title, level, language, duration, trending, price, old_price, content, category_id, user_id);
     res.status(201).json({ id: newCourseId });
 }
 

@@ -3,7 +3,7 @@ const mysql = require('mysql2');
 
 
 // Create a new course
-async function createCourse(title, level, language, duration, trending, price, old_price, content, category_id, user_id) {
+async function createCourse(image_url,short_video_url,title, level, language, duration, trending, price, old_price, content, category_id, user_id) {
     const query = `
         INSERT INTO course (title, level, language, duration, trending, price, old_price, content, created_at, category_id, user_id)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, current_timestamp(), ?, ?)
