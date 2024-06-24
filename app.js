@@ -26,7 +26,7 @@ app.use((req,res,next)=>{
    next()
 })
 app.use('/auth',authRoute)
-app.use(checkToken)
+// app.use(checkToken)
 app.use('/user',userRoute)
 app.use('/category',categoryRoute)
 app.use('/course',courseRoute)

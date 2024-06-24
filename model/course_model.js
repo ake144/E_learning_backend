@@ -1,5 +1,4 @@
-const mysql = require('mysql2');
-
+const db=require('../config/db')
 
 
 // Create a new course
@@ -14,14 +13,40 @@ async function createCourse(image_url,short_video_url,title, level, language, du
 
 // Get a course by ID
 async function getCourseById(id) {
-    const query = 'SELECT * FROM course WHERE id = ?';
+    // const query = 'SELECT * FROM course WHERE id = ?';
+    const query= `SELECT 
+    course.*, 
+    users.username AS user_name, 
+    category.name AS category_name
+FROM 
+    course
+JOIN 
+    users ON course.user_id = users.id
+JOIN 
+    category ON course.category_id = category.id
+    WHERE
+    course.id = ?
+`
+
+    
     const [rows] = await db.query(query, [id]);
     return rows[0];
 }
 
 // Get all courses
 async function getAllCourses() {
-    const query = 'SELECT * FROM course';
+    // const query = 'SELECT * FROM course';
+   const query= `SELECT 
+    course.*, 
+    users.username AS user_name, 
+    category.name AS category_name
+FROM 
+    course
+JOIN 
+    users ON course.user_id = users.id
+JOIN 
+    category ON course.category_id = category.id;
+`
     const [rows] = await db.query(query);
     return rows;
 }
