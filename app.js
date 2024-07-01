@@ -11,8 +11,10 @@ const categoryRoute=require('./routes/category_route')
 const courseRoute=require('./routes/course_route')
 const  ratingRoute=require('./routes/rating_route')
 const authRoute=require('./routes/auth_route')
+const paymentRoute=require('./routes/payment_route')
 const {checkToken}=require('./utils/check_token')
 const {errorResponder}=require('./utils/error_responder')
+
 
 app.use(cors({ origin: '*' }));
 
@@ -27,6 +29,7 @@ app.use((req,res,next)=>{
 })
 app.use('/auth',authRoute)
 // app.use(checkToken)
+app.use('/payment',paymentRoute)
 app.use('/user',userRoute)
 app.use('/category',categoryRoute)
 app.use('/course',courseRoute)
