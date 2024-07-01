@@ -1,6 +1,9 @@
 async function chappaPay(req,res){
 
-    const {amount,currency,email,first_name,last_name,phone_number,tx_ref,callback_url,return_url}=req.body
+    const {amount,currency,email,first_name,last_name,phone_number,tx_ref,  redirect_url,
+        payment_options,
+        customizations,
+    }=req.body
     var myHeaders = new Headers();
 
     myHeaders.append("Authorization", "Bearer CHASECK_TEST-zlrlXn86lN1GoNLulVWs7dGzCPxVfKzs");
@@ -14,14 +17,12 @@ async function chappaPay(req,res){
         "last_name": last_name,
         "phone_number": phone_number,
         "tx_ref": tx_ref,
-        "callback_url": callback_url,
-        "return_url": return_url,
+        "return_url": redirect_url,
         "tx_ref": tx_ref,
         "callback_url": "https://webhook.site/077164d6-29cb-40df-ba29-8a00e59a7e60",
         "return_url": "https://www.google.com/",
-        "customization[description]": "I love online payments"
-       
-       
+        "payment_options": payment_options,
+        "customizations": customizations
       });
 
 var requestOptions = {
@@ -45,11 +46,6 @@ var requestOptions = {
     return res.status(401).json({ error: error.message });
 }
 
-
-
-  
-   
-    
    
 
 }
