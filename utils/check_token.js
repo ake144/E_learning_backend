@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { AuthenticationError } = require('./custom_error');
 
-async function checkToken(req, res, next) {
+async function checkToken(req, next) {
     let token;
 
     // Check Authorization header for token
