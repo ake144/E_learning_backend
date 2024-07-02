@@ -20,7 +20,7 @@ async function chappaPay(req,res){
         "return_url": redirect_url,
         "tx_ref": tx_ref,
         "callback_url": "https://webhook.site/077164d6-29cb-40df-ba29-8a00e59a7e60",
-        "return_url": "https://www.google.com/",
+        // "return_url": "https://www.google.com/",
         "payment_options": payment_options,
         "customizations": customizations
       });
@@ -44,9 +44,7 @@ var requestOptions = {
     return res.status(200).json({ data: data.data });
 } catch (error) {
     return res.status(401).json({ error: error.message });
-}
-
-   
+}  
 
 }
 
