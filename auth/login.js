@@ -31,10 +31,10 @@ try {
 async function login(req, res) {
     const { email, password } = req.body;
 
-    const parsed = loginSchema.safeParse(req.body);
-    if (!parsed.success) {
-        return res.status(400).json({ error: parsed.error });
-    }
+    // const parsed = loginSchema.safeParse(req.body);
+    // if (!parsed.success) {
+    //     return res.status(400).json({ error: parsed.error });
+    // }
     
     try {
         const user = await userModel.getUserByEmail(email);
