@@ -14,6 +14,7 @@ const authRoute=require('./routes/auth_route')
 const paymentRoute=require('./routes/payment_route')
 const {checkToken}=require('./utils/check_token')
 const {errorResponder}=require('./utils/error_responder')
+const  {checkError}=require('./utils/error_checker')
 
 
 app.use(cors({ origin: '*' }));
@@ -28,7 +29,7 @@ app.use((req,res,next)=>{
    next()
 })
 app.use('/auth',authRoute)
-// app.use(checkToken)
+app.use(checkError(checkToken))
 app.use('/payment',paymentRoute)
 app.use('/user',userRoute)
 app.use('/category',categoryRoute)
