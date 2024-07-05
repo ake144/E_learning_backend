@@ -29,12 +29,12 @@ app.use((req,res,next)=>{
    next()
 })
 app.use('/auth',authRoute)
-app.use(checkError(checkToken))
-app.use('/payment',paymentRoute)
 app.use('/user',userRoute)
 app.use('/category',categoryRoute)
 app.use('/course',courseRoute)
 app.use('/rating',ratingRoute)
+app.use(checkError(checkToken))
+app.use('/payment',paymentRoute)
 app.use(errorResponder)
 
 module.exports = app;
