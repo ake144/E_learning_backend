@@ -6,7 +6,12 @@ const userModel = require('../model/users_model');
 async function register(req, res) {
     const { Fname, Lname, email, password, type } = req.body;
 
-    try {
+   const parsed = registerSchema.safeParse(req.body);
+    if (!parsed.success) {
+        return res.status(400).json({ error: parsed.error });
+    }
+
+try {
         // Check if user already exists with the given email
         const existingUser = await userModel.getUserByEmail(email);
         if (existingUser) {
@@ -26,6 +31,11 @@ async function register(req, res) {
 async function login(req, res) {
     const { email, password } = req.body;
 
+    const parsed = loginSchema.safeParse(req.body);
+    if (!parsed.success) {
+        return res.status(400).json({ error: parsed.error });
+    }
+    
     try {
         const user = await userModel.getUserByEmail(email);
         if (!user) {
@@ -42,7 +52,7 @@ async function login(req, res) {
         const token = jwt.sign({ userId: user.id, email: user.email, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         console.log("User authenticated, generating token");
-        res.cookie('JWTELARN', token, { httpOnly: true });
+        res.cookie('JWTELARN', token, { httpOnly: true,  secure: true  });
         res.status(200).json({
             id: user.id,
             email: user.email,
