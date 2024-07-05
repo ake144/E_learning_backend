@@ -1,31 +1,30 @@
 const jwt = require('jsonwebtoken');
 const { AuthenticationError } = require('./custom_error');
-
-async function checkToken(req, next) {
+const {getToken}=require("next-auth/jwt")
+async function checkToken(req,res,next) {
     let token;
-
-    // Check Authorization header for token
-    if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-        token = req.headers.authorization.split(' ')[1];
-    } else if (req.cookies && req.cookies.token) {
-        // Check for token in cookies
-        token = req.cookies.token;
-    }
-
-    // If no token found
+    token= await getToken({req,secret:process.env.JWT_SECRET})
+    console.log(token,'toto')
+ 
     if (!token) {
         throw new AuthenticationError({ status: 401, message: 'Token not found' });
     }
+    next()
 
-    try {
-        // Verify token
-        await jwt.verify(token, "SREESRCOM");
-        next();
-    } catch (error) {
-        throw new AuthenticationError({ status: 401, message: 'Invalid Token' });
-    }
 }
+
+//     try {
+//         console.log(req.cookies['next-auth.session-token'],'*****************************'
+//             , process.env.JWT_SECRET)
+//         let tt=await jwt.decode(req.cookies['next-auth.session-token'], process.env.JWT_SECRET);
+//         console.log(tt,'tt')
+//         await jwt.verify(req.cookies['next-auth.session-token'], process.env.JWT_SECRET,{algorithms:['HS256']});
+//         next();
+//     } catch (error) {
+//         throw new AuthenticationError({ status: 401, message: 'Invalid Token' });
+//     }
+// }
 
 module.exports = {
     checkToken
-};
+}

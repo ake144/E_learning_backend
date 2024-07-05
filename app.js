@@ -17,7 +17,7 @@ const {errorResponder}=require('./utils/error_responder')
 const  {checkError}=require('./utils/error_checker')
 
 
-app.use(cors({ origin: '*' }));
+app.use(cors({ origin:["http://localhost:3000"],credentials: true }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
