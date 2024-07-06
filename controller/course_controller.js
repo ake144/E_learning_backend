@@ -20,7 +20,7 @@ async function getCourseById(req, res) {
 // Get all courses
 async function getAllCourses(req, res) {
     const courses = await courseModel.getAllCourses();
-    res.status(200).json({courses});
+    res.status(200).json(courses);
 }
 
 // Get courses by category ID
