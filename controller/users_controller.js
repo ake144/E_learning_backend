@@ -1,88 +1,68 @@
-const userModel = require('../model/users_model'); // Adjust the path as per your file structure
+const db = require("../config/db");
 
-// Create a new user
-async function createUser(req, res) {
-    const { username, phone_number, email, password, type } = req.body;
-    try {
-        const newUserId = await userModel.createUser(username, phone_number, email, password, type);
-        res.status(201).json({ id: newUserId });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+
+async function createUser(username, phone_number, email, password, type = 'client') {
+    const query = `
+        INSERT INTO users (username, phone_number, email, password, type)
+        VALUES (?, ?, ?, ?,?)
+    `;
+    const [result] = await db.query(query, [username, phone_number, email, password, type]);
+    return result.insertId;
 }
 
 // Get a user by ID
-async function getUserById(req, res) {
-    try {
-        const user = await userModel.getUserById(req.params.id);
-        if (user) {
-            res.status(200).json(user);
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+async function getUserById(id) {
+    const query = 'SELECT * FROM users WHERE id = ?';
+    const [rows] = await db.query(query, [id]);
+    return rows[0];
 }
-
-// Get a user by phone number
-async function getUserByPhoneNumber(req, res) {
-    try {
-        const user = await userModel.getUserByPhoneNumber(req.params.phone_number);
-        if (user) {
-            res.status(200).json(user);
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+async function getUserByEmail(email) {
+    const query = 'SELECT * FROM users WHERE email = ?';
+    const [rows] = await db.query(query, [email]);
+    return rows[0];
+}
+async function getUserByPhoneNumber(phone_number) {
+    const query = 'SELECT * FROM users WHERE phone_number = ?';
+    const [rows] = await db.query(query, [phone_number]);
+    return rows[0];
 }
 
 // Get all users
-async function getAllUsers(req, res) {
-    try {
-        const users = await userModel.getAllUsers();
-        res.status(200).json(users);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+async function getAllUsers() {
+    const query = 'SELECT * FROM users';
+    const [rows] = await db.query(query);
+    return rows;
 }
 
 // Update a user
-async function updateUser(req, res) {
-    const { username, phone_number, email, password, type } = req.body;
-    try {
-        const updatedRows = await userModel.updateUser(req.params.id, username, phone_number, email, password, type);
-        if (updatedRows > 0) {
-            res.status(200).json({ message: 'User updated successfully' });
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+async function updateUser(id, username, phone_number, email, password, type) {
+    const query = `
+        UPDATE users
+        SET 
+            username = COALESCE(?, username),
+            phone_number = COALESCE(?, phone_number),
+            email = COALESCE(?, email),
+            password = COALESCE(?, password),
+            type = COALESCE(?, type)
+        WHERE id = ?
+    `;
+    const [result] = await db.query(query, [username, phone_number, email, password, type, id]);
+    return result.affectedRows;
 }
 
 // Delete a user
-async function deleteUser(req, res) {
-    try {
-        const deletedRows = await userModel.deleteUser(req.params.id);
-        if (deletedRows > 0) {
-            res.status(200).json({ message: 'User deleted successfully' });
-        } else {
-            res.status(404).json({ message: 'User not found' });
-        }
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
+async function deleteUser(id) {
+    const query = 'DELETE FROM users WHERE id = ?';
+    const [result] = await db.query(query, [id]);
+    return result.affectedRows;
 }
 
 module.exports = {
     createUser,
     getUserById,
-    getUserByPhoneNumber,
     getAllUsers,
+    getUserByPhoneNumber,
     updateUser,
-    deleteUser
+    deleteUser,
+    getUserByEmail,
 };
