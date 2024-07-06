@@ -1,12 +1,12 @@
 const db = require("../config/db");
 
 
-async function createUser(username, phone_number, email, password, type = 'client') {
+async function createUser(Fname, Lname, phone_number, email, password, type = 'client') {
     const query = `
-        INSERT INTO users (username, phone_number, email, password, type)
+        INSERT INTO users (Fname, Lname, phone_number, email, password, type)
         VALUES (?, ?, ?, ?,?)
     `;
-    const [result] = await db.query(query, [username, phone_number, email, password, type]);
+    const [result] = await db.query(query, [Fname, Lname, phone_number, email, password, type]);
     return result.insertId;
 }
 
@@ -35,18 +35,19 @@ async function getAllUsers() {
 }
 
 // Update a user
-async function updateUser(id, username, phone_number, email, password, type) {
+async function updateUser(id, Fname, Lname, phone_number, email, password, type) {
     const query = `
         UPDATE users
         SET 
-            username = COALESCE(?, username),
+            Fname = COALESCE(?, Fname),
+            Lname = COALESCE(?, Lname),
             phone_number = COALESCE(?, phone_number),
             email = COALESCE(?, email),
             password = COALESCE(?, password),
             type = COALESCE(?, type)
         WHERE id = ?
     `;
-    const [result] = await db.query(query, [username, phone_number, email, password, type, id]);
+    const [result] = await db.query(query, [Fname, Lname, phone_number, email, password, type, id]);
     return result.affectedRows;
 }
 
