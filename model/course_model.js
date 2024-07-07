@@ -38,7 +38,7 @@ async function getAllCourses() {
     // const query = 'SELECT * FROM course';
    const query= `SELECT 
     course.*, 
-    users.username AS user_name, 
+    
     category.name AS category_name
 FROM 
     course
