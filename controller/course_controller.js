@@ -49,6 +49,15 @@ async function deleteCourse(req, res) {
         res.status(404).json({ message: 'Course not found' });
     }
 }
+async function getPurchasedCourses(req, res) {
+    const courses = await courseModel.getPurchasedCoursesByUserId(req.params.userId);
+    res.status(200).json(courses);
+}
+async function cretePurchasedCourse(req, res) {
+    const { user_id, course_id } = req.body;
+    const newCourseId = await courseModel.createPurchasedCourse(user_id, course_id);
+    res.status(201).json({ id: newCourseId });
+}
 
 module.exports = {
     createCourse,
@@ -56,7 +65,10 @@ module.exports = {
     getAllCourses,
     getCoursesByCategoryId,
     updateCourse,
-    deleteCourse
+    deleteCourse,
+    getPurchasedCourses,
+    cretePurchasedCourse
+    
 };
 
 

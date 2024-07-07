@@ -85,11 +85,26 @@ async function getCoursesByCategoryId(category_id) {
     return rows;
 }
 
+async function getPurchasedCoursesByUserId(user_id) {
+     const query=`SELECT * FROM purchased WHERE user_id = ?`;
+     const [rows] = await db.query(query, [user_id]);
+     const [courses]=await db.query( `SELECT * FROM course WHERE id IN (${rows.map(row => row.course_id).join(',')})`);
+     return courses;
+
+}
+async function createPurchasedCourse(user_id, course_id) {
+    const query = 'INSERT INTO purchased (user_id, course_id) VALUES (?, ?)';
+    const [result] = await db.query(query, [user_id, course_id]);
+    return result.insertId;
+}
+
 module.exports = {
     createCourse,
     getCourseById,
     getAllCourses,
     updateCourse,
     deleteCourse,
-    getCoursesByCategoryId
+    getCoursesByCategoryId,
+    getPurchasedCoursesByUserId,
+    createPurchasedCourse
 };

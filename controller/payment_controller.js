@@ -12,47 +12,42 @@ async function chappaPay(req, res) {
         tx_ref,
       } = req.body;
 
+//
 
-      console.log("from body", req.body);
+var myHeaders = new Headers();
+myHeaders.append("Authorization", "Bearer CHASECK_TEST-MWjP2uReB74uu0MY1IoxuYqP68QhvLaX");
+myHeaders.append("Content-Type", "application/json");
 
-      try {
-        const header = {
-          headers: {
-            Authorization: `Bearer CHASECK_TEST-MWjP2uReB74uu0MY1IoxuYqP68QhvLaX`,
-            "Content-Type": "application/json",
-          },
-        };
-        const body = {
-          amount: amount,
-          currency: currency,
-          email: email,
-          first_name: first_name,
-          last_name: last_name,
-          phone_number: phone_number,
-          tx_ref: tx_ref,
-          return_url:redirect_url, // Set your return URL
-        };
-        let resp = "";
-        await axios
-          .post("https://api.chapa.co/v1/transaction/initialize", body, header)
-          .then((response) => {
-            resp = response;
-          })
-          .catch((error) => {
-            console.log(error.response.data);
-            console.log(error.response.status);
-            console.log(error.response.headers);
-            res.status(400).json({
-              message: error,
-            });
-          });
-        res.status(200).json(resp.data);
-      } catch (e) {
-        res.status(400).json({
-          error_code: e.code,
-          message: e.message,
-        });
-      }
+var raw = JSON.stringify({
+  "amount": `${amount}`,
+  "currency": `${currency}`,
+  "email": `${email}`,
+  "first_name":`${first_name}`,
+  "last_name": `${last_name}`,
+  "phone_number": `${phone_number}` ,
+  "tx_ref": `${tx_ref}`,
+  "callback_url": "https://webhook.site/077164d6-29cb-40df-ba29-8a00e59a7e60",
+  "return_url": "http://localhost:3000/hello",
+  "customization[title]": "Payment for my favourite merchant",
+  "customization[description]": "I love online payments"
+});
+
+var requestOptions = {
+  method: 'POST',
+  headers: myHeaders,
+  body: raw,
+  redirect: 'follow'
+};
+
+const response=await fetch("https://api.chapa.co/v1/transaction/initialize", requestOptions)
+const data=await response.json()
+console.log(data,'dd')
+
+
+res.json(data.data.checkout_url);
+
+
+
     }
 
 

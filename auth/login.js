@@ -10,19 +10,16 @@ async function login(req, res) {
     try {
         const user = await userModel.getUserByEmail(email);
         if (!user) {
-            console.log("User not found");
             return res.status(404).json({ message: 'User not found' });
         }
 
         const isPasswordMatch = await bcrypt.compare(password, user.password);
         if (!isPasswordMatch) {
-            console.log("Invalid credentials");
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
         const token = jwt.sign({ userId: user.id, email: user.email, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-        console.log("User authenticated, generating token");
         res.cookie('JWTELARN', token, { httpOnly: true });
         res.status(200).json({
           id: user.id,
@@ -32,7 +29,6 @@ async function login(req, res) {
           Lname: user.Lname,
         });
     } catch (error) {
-        console.log("Error during login:", error.message);
         res.status(500).json({ error: error.message });
     }
 }
