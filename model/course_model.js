@@ -16,7 +16,6 @@ async function getCourseById(id) {
     // const query = 'SELECT * FROM course WHERE id = ?';
     const query= `SELECT 
     course.*, 
-    users.username AS user_name, 
     category.name AS category_name
 FROM 
     course
