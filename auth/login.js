@@ -35,8 +35,8 @@ async function login(req, res) {
 
 // Register a new user
  async function register (req, res) {
-    const { Fname,Lname, email, password, type } = req.body;
-
+    const { Fname,Lname, email, password,phone_number,type } = req.body;
+         console.log(Fname,Lname, email, password, type)
     try {
         // Check if user already exists with the given email
         const existingUser = await userModel.getUserByEmail(email);
@@ -49,9 +49,9 @@ async function login(req, res) {
 
 
         // Create a new user
-        const userId = await userModel.createUser(Fname, Lname, email, hashedPassword, type);
+        const userId = await userModel.createUser(Fname, Lname,phone_number,email, hashedPassword, type);
 
-        // Respond with success message
+        console.log(userId,'hey')
         res.status(201).json({ id: userId, message: 'User registered successfully' });
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -66,3 +66,8 @@ module.exports = {
     login,
     register
 };
+
+
+
+
+

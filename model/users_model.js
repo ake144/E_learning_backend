@@ -1,12 +1,17 @@
 const db = require("../config/db");
 
 
-async function createUser(Fname, Lname, phone_number, email, password, type = 'client') {
+async function createUser(Fname, Lname, phone_number='0980808080', email, password, type = 'client') {
+    console.log(Fname, Lname, phone_number, email, password, type)
+
     const query = `
         INSERT INTO users (Fname, Lname, phone_number, email, password, type)
-        VALUES (?, ?, ?, ?,?)
+        VALUES (?, ?, ?, ?,?,?)
     `;
-    const [result] = await db.query(query, [Fname, Lname, phone_number, email, password, type]);
+    
+        const [result] = await db.query(query, [Fname, Lname, phone_number, email, password, type]);
+
+   
     return result.insertId;
 }
 
