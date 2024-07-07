@@ -86,8 +86,14 @@ async function getCoursesByCategoryId(category_id) {
 }
 
 async function getPurchasedCoursesByUserId(user_id) {
+    console.log(user_id)
      const query=`SELECT * FROM purchased WHERE user_id = ?`;
+    
      const [rows] = await db.query(query, [user_id]);
+
+        if (rows.length === 0) {
+            return [];
+        }
      const [courses]=await db.query( `SELECT * FROM course WHERE id IN (${rows.map(row => row.course_id).join(',')})`);
      return courses;
 
