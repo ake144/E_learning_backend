@@ -18,13 +18,12 @@ async function login(req, res) {
             return res.status(401).json({ message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign({ userId: user.id, email: user.email, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user.id, email: user.email,Fname: user.Fname, Lname: user.Lname }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
         res.cookie('JWTELARN', token, { httpOnly: true });
         res.status(200).json({
           id: user.id,
           email: user.email,
-          username: user.username,
           Fname: user.Fname,
           Lname: user.Lname,
         });
