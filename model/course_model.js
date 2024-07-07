@@ -93,6 +93,10 @@ async function getPurchasedCoursesByUserId(user_id) {
 
 }
 async function createPurchasedCourse(user_id, course_id) {
+    const isPurchased = await db.query('SELECT * FROM purchased WHERE user_id = ? AND course_id = ?', [user_id, course_id]);
+    if (isPurchased[0].length > 0) {
+        throw new Error('Course already purchased');
+    }
     const query = 'INSERT INTO purchased (user_id, course_id) VALUES (?, ?)';
     const [result] = await db.query(query, [user_id, course_id]);
     return result.insertId;
