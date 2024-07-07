@@ -27,11 +27,7 @@ async function deleteUser(req,res) {
 }
 
 module.exports = {
-    createUser,
-    getUserById,
-    getAllUsers,
-    getUserByPhoneNumber,
+   
     updateUser,
     deleteUser,
-    getUserByEmail,
 };
