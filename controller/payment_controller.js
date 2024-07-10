@@ -27,7 +27,7 @@ var raw = JSON.stringify({
   "phone_number": `${phone_number}` ,
   "tx_ref": `${tx_ref}`,
   "callback_url": "https://webhook.site/077164d6-29cb-40df-ba29-8a00e59a7e60",
-  "return_url": "http://localhost:3000/hello",
+  "return_url": `${redirect_url}`,
   "customization[title]": "Payment for my favourite merchant",
   "customization[description]": "I love online payments"
 });
