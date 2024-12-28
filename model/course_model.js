@@ -22,15 +22,19 @@ async function createCourse(image_url, short_video_url, title, level, language, 
 
 // Get a course by ID
 async function getCourseById(id) {
+    if (typeof id !== 'number') {
+      throw new Error('Invalid ID type, expected a number');
+    }
+  
     const course = await prisma.course.findUnique({
-        where: { id },
-        include: {
-            // user: { select: { Fname: true } },
-            category: { select: { name: true } },
-        },
+      where: { id },
+      include: {
+        category: { select: { name: true } },
+      },
     });
+  
     return course;
-}
+  }
 
 // Get all courses
 async function getAllCourses() {

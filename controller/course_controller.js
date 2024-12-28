@@ -9,13 +9,19 @@ async function createCourse(req, res) {
 
 // Get a course by ID
 async function getCourseById(req, res) {
-    const course = await courseModel.getCourseById(req.params.id);
-    if (course) {
-        res.status(200).json(course);
-    } else {
-        res.status(404).json({ message: 'Course not found' });
+    const id = parseInt(req.params.id, 10); // Convert to integer
+    if (isNaN(id)) {
+      return res.status(400).json({ message: 'Invalid course ID' });
     }
-}
+  
+    const course = await courseModel.getCourseById(id);
+    if (course) {
+      res.status(200).json(course);
+    } else {
+      res.status(404).json({ message: 'Course not found' });
+    }
+  }
+  
 
 // Get all courses
 async function getAllCourses(req, res) {
