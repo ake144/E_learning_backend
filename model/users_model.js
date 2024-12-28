@@ -3,7 +3,7 @@ const prisma = require("../config/db");
 
 
 // Create a new user
-async function createUser(Fname, Lname, phone_number, email, password, type = 'client') {
+async function createUser(Fname='jhone', Lname='doe', phone_number, email, password, type = 'client') {
     const user = await prisma.user.create({
         data: {
             Fname,
