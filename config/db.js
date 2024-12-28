@@ -1,20 +1,21 @@
-/**
- * db
- * @module db
- */
-require("dotenv").config();
-const mysql = require("mysql2");
-const db = mysql.createConnection({
-  host:process.env.HOST,
-  user:process.env.DB_USER,
-  password:process.env.DB_PASS,
-  database:process.env.DATABASE
-});
+const { PrismaClient } = require('@prisma/client');
 
+const prismaClientSingleton = () => {
+  return new PrismaClient();
+};
 
-db.connect((err) => {
-  if (err) throw err;
-  console.log("Connected to MySQL database!");
-});
+// Create a global variable to hold the Prisma instance
+let prisma;
 
-module.exports = db.promise();
+if (process.env.NODE_ENV !== 'production') {
+  // In development mode, use a global variable to avoid creating multiple Prisma instances
+  if (!global.prismaGlobal) {
+    global.prismaGlobal = prismaClientSingleton();
+  }
+  prisma = global.prismaGlobal;
+} else {
+  // In production mode, create a new PrismaClient instance
+  prisma = prismaClientSingleton();
+}
+
+module.exports = prisma;
