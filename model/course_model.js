@@ -25,7 +25,7 @@ async function getCourseById(id) {
     const course = await prisma.course.findUnique({
         where: { id },
         include: {
-            user: { select: { Fname: true } },
+            // user: { select: { Fname: true } },
             category: { select: { name: true } },
         },
     });
@@ -36,7 +36,6 @@ async function getCourseById(id) {
 async function getAllCourses() {
     const courses = await prisma.course.findMany({
         include: {
-            user: { select: { Fname: true } },
             category: { select: { name: true } },
         },
     });
