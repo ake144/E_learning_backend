@@ -13,7 +13,7 @@ const paymentRoute = require('./routes/payment_route');
 const { checkToken } = require('./utils/check_token');
 const { errorResponder } = require('./utils/error_responder');
 
-app.use(cors({ origin: ['http://localhost:3000',"https://brightethiopia.vercel.app/"], credentials: true }));
+app.use(cors({ origin: ['http://localhost:3000','https://brightethiopia.vercel.app'], credentials: true }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
