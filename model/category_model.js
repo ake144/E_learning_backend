@@ -1,47 +1,48 @@
+const prisma = require("../config/database");
 
-const db = require("../config/db");
+
 
 // Create a new category
 async function createCategory(name) {
-    const query = `
-        INSERT INTO category (name, created_at)
-        VALUES (?, current_timestamp())
-    `;
-    const [result] = await db.query(query, [name]);
-    return result.insertId;
+    const category = await prisma.category.create({
+        data: {
+            name: name,
+        },
+    });
+    return category.id;
 }
 
 // Get a category by ID
 async function getCategoryById(id) {
-    const query = 'SELECT * FROM category WHERE id = ?';
-    const [rows] = await db.query(query, [id]);
-    return rows[0];
+    const category = await prisma.category.findUnique({
+        where: { id: id },
+    });
+    return category;
 }
 
 // Get all categories
 async function getAllCategories() {
-    const query = 'SELECT * FROM category';
-    const [rows] = await db.query(query);
-    return rows;
+    const categories = await prisma.category.findMany();
+    return categories;
 }
 
 // Update a category
 async function updateCategory(id, name) {
-    const query = `
-        UPDATE category
-        SET 
-            name = COALESCE(?, name)
-        WHERE id = ?
-    `;
-    const [result] = await db.query(query, [name, id]);
-    return result.affectedRows;
+    const category = await prisma.category.update({
+        where: { id: id },
+        data: {
+            name: name || undefined, // Use undefined to keep existing value if name is not provided
+        },
+    });
+    return category;
 }
 
 // Delete a category
 async function deleteCategory(id) {
-    const query = 'DELETE FROM category WHERE id = ?';
-    const [result] = await db.query(query, [id]);
-    return result.affectedRows;
+    const result = await prisma.category.delete({
+        where: { id: id },
+    });
+    return result ? 1 : 0; // Return 1 if deleted successfully, otherwise 0
 }
 
 module.exports = {
@@ -49,5 +50,5 @@ module.exports = {
     getCategoryById,
     getAllCategories,
     updateCategory,
-    deleteCategory
+    deleteCategory,
 };

@@ -20,10 +20,12 @@ model Course {
   level       String
   language    String
   duration    String
-  trending    Boolean
+  trending    Int?     @default(0)
   price       Float
   old_price   Float
   content     String
+  image_url   String   @map("image_url")
+  short_video_url String   @map("short_video_url")
   createdAt   DateTime @default(now()) @map("created_at")
   categoryId  Int
   userId      Int
@@ -34,8 +36,8 @@ model Course {
 
 model User {
   id           Int      @id @default(autoincrement())
-  Fname        String
-  Lname        String
+  Fname        String?   @map("Fname")
+  Lname        String?  @map("Lname")
   phoneNumber  String   @map("phone_number")
   email        String   @unique
   password     String

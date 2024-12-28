@@ -1,66 +1,74 @@
-const db = require("../config/db");
+const prisma = require("../config/database");
 
 
-async function createUser(Fname, Lname, phone_number='0980808080', email, password, type = 'client') {
-    console.log(Fname, Lname, phone_number, email, password, type)
 
-    const query = `
-        INSERT INTO users (Fname, Lname, phone_number, email, password, type)
-        VALUES (?, ?, ?, ?,?,?)
-    `;
-    
-        const [result] = await db.query(query, [Fname, Lname, phone_number, email, password, type]);
-
-   
-    return result.insertId;
+// Create a new user
+async function createUser(Fname, Lname, phone_number, email, password, type = 'client') {
+    const user = await prisma.user.create({
+        data: {
+            Fname,
+            Lname,
+            phoneNumber: phone_number,
+            email,
+            password,
+            type,
+        },
+    });
+    return user.id;
 }
 
 // Get a user by ID
 async function getUserById(id) {
-    const query = 'SELECT * FROM users WHERE id = ?';
-    const [rows] = await db.query(query, [id]);
-    return rows[0];
+    const user = await prisma.user.findUnique({
+        where: { id },
+    });
+    return user;
 }
+
+// Get a user by email
 async function getUserByEmail(email) {
-    const query = 'SELECT * FROM users WHERE email = ?';
-    const [rows] = await db.query(query, [email]);
-    return rows[0];
+    const user = await prisma.user.findUnique({
+        where: { email },
+    });
+    return user;
 }
+
+// Get a user by phone number
 async function getUserByPhoneNumber(phone_number) {
-    const query = 'SELECT * FROM users WHERE phone_number = ?';
-    const [rows] = await db.query(query, [phone_number]);
-    return rows[0];
+    const user = await prisma.user.findUnique({
+        where: { phoneNumber: phone_number },
+    });
+    return user;
 }
 
 // Get all users
 async function getAllUsers() {
-    const query = 'SELECT * FROM users';
-    const [rows] = await db.query(query);
-    return rows;
+    const users = await prisma.user.findMany();
+    return users;
 }
 
 // Update a user
 async function updateUser(id, Fname, Lname, phone_number, email, password, type) {
-    const query = `
-        UPDATE users
-        SET 
-            Fname = COALESCE(?, Fname),
-            Lname = COALESCE(?, Lname),
-            phone_number = COALESCE(?, phone_number),
-            email = COALESCE(?, email),
-            password = COALESCE(?, password),
-            type = COALESCE(?, type)
-        WHERE id = ?
-    `;
-    const [result] = await db.query(query, [Fname, Lname, phone_number, email, password, type, id]);
-    return result.affectedRows;
+    const user = await prisma.user.update({
+        where: { id },
+        data: {
+            Fname: Fname || undefined,
+            Lname: Lname || undefined,
+            phoneNumber: phone_number || undefined,
+            email: email || undefined,
+            password: password || undefined,
+            type: type || undefined,
+        },
+    });
+    return user;
 }
 
 // Delete a user
 async function deleteUser(id) {
-    const query = 'DELETE FROM users WHERE id = ?';
-    const [result] = await db.query(query, [id]);
-    return result.affectedRows;
+    const result = await prisma.user.delete({
+        where: { id },
+    });
+    return result ? 1 : 0; // Return 1 if deleted successfully, otherwise 0
 }
 
 module.exports = {

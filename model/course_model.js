@@ -1,110 +1,116 @@
-const db=require('../config/db')
+const prisma =  require("../config/database");
 
 
 // Create a new course
-async function createCourse(image_url,short_video_url,title, level, language, duration, trending, price, old_price, content, category_id, user_id) {
-    const query = `
-        INSERT INTO course (title, level, language, duration, trending, price, old_price, content, created_at, category_id, user_id)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, current_timestamp(), ?, ?)
-    `;
-    const [result] = await db.query(query, [title, level, language, duration, trending, price, old_price, content, category_id, user_id]);
-    return result.insertId;
+async function createCourse(image_url, short_video_url, title, level, language, duration, trending, price, old_price, content, category_id, user_id) {
+    const course = await prisma.course.create({
+        data: {
+            title,
+            level,
+            language,
+            duration,
+            trending,
+            price,
+            old_price,
+            content,
+            categoryId: category_id,
+            userId: user_id,
+        },
+    });
+    return course.id;
 }
 
 // Get a course by ID
 async function getCourseById(id) {
-    // const query = 'SELECT * FROM course WHERE id = ?';
-    const query= `SELECT 
-    course.*, 
-    category.name AS category_name
-FROM 
-    course
-JOIN 
-    users ON course.user_id = users.id
-JOIN 
-    category ON course.category_id = category.id
-    WHERE
-    course.id = ?
-`
-
-    
-    const [rows] = await db.query(query, [id]);
-    return rows[0];
+    const course = await prisma.course.findUnique({
+        where: { id },
+        include: {
+            user: { select: { Fname: true } },
+            category: { select: { name: true } },
+        },
+    });
+    return course;
 }
 
 // Get all courses
 async function getAllCourses() {
-    // const query = 'SELECT * FROM course';
-   const query= `SELECT 
-    course.*, 
-    
-    category.name AS category_name
-FROM 
-    course
-JOIN 
-    users ON course.user_id = users.id
-JOIN 
-    category ON course.category_id = category.id;
-`
-    const [rows] = await db.query(query);
-    return rows;
+    const courses = await prisma.course.findMany({
+        include: {
+            user: { select: { Fname: true } },
+            category: { select: { name: true } },
+        },
+    });
+    return courses;
 }
 
 // Update a course
 async function updateCourse(id, title, level, language, duration, trending, price, old_price, content, category_id, user_id) {
-    const query = `
-        UPDATE course
-        SET 
-            title = COALESCE(?, title),
-            level = COALESCE(?, level),
-            language = COALESCE(?, language),
-            duration = COALESCE(?, duration),
-            trending = COALESCE(?, trending),
-            price = COALESCE(?, price),
-            old_price = COALESCE(?, old_price),
-            content = COALESCE(?, content),
-            category_id = COALESCE(?, category_id),
-            user_id = COALESCE(?, user_id)
-        WHERE id = ?
-    `;
-    const [result] = await db.query(query, [title, level, language, duration, trending, price, old_price, content, category_id, user_id, id]);
-    return result.affectedRows;
+    const course = await prisma.course.update({
+        where: { id },
+        data: {
+            title: title || undefined,
+            level: level || undefined,
+            language: language || undefined,
+            duration: duration || undefined,
+            trending: trending || undefined,
+            price: price || undefined,
+            old_price: old_price || undefined,
+            content: content || undefined,
+            categoryId: category_id || undefined,
+            userId: user_id || undefined,
+        },
+    });
+    return course;
 }
 
 // Delete a course
 async function deleteCourse(id) {
-    const query = 'DELETE FROM course WHERE id = ?';
-    const [result] = await db.query(query, [id]);
-    return result.affectedRows;
+    const result = await prisma.course.delete({
+        where: { id },
+    });
+    return result ? 1 : 0; // Return 1 if deleted successfully, otherwise 0
 }
 
+// Get courses by category ID
 async function getCoursesByCategoryId(category_id) {
-    const query = 'SELECT * FROM course WHERE category_id = ?';
-    const [rows] = await db.query(query, [category_id]);
-    return rows;
+    const courses = await prisma.course.findMany({
+        where: { categoryId: category_id },
+    });
+    return courses;
 }
 
+// Get purchased courses by user ID
 async function getPurchasedCoursesByUserId(user_id) {
-    console.log(user_id)
-     const query=`SELECT * FROM purchased WHERE user_id = ?`;
-    
-     const [rows] = await db.query(query, [user_id]);
+    const purchasedCourses = await prisma.purchased.findMany({
+        where: { userId: user_id },
+        include: { course: true },
+    });
 
-        if (rows.length === 0) {
-            return [];
-        }
-     const [courses]=await db.query( `SELECT * FROM course WHERE id IN (${rows.map(row => row.course_id).join(',')})`);
-     return courses;
-
+    return purchasedCourses.map(p => p.course);
 }
+
+// Create purchased course
 async function createPurchasedCourse(user_id, course_id) {
-    const isPurchased = await db.query('SELECT * FROM purchased WHERE user_id = ? AND course_id = ?', [user_id, course_id]);
-    if (isPurchased[0].length > 0) {
+    const isPurchased = await prisma.purchased.findUnique({
+        where: {
+            userId_courseId: {
+                userId: user_id,
+                courseId: course_id,
+            },
+        },
+    });
+
+    if (isPurchased) {
         throw new Error('Course already purchased');
     }
-    const query = 'INSERT INTO purchased (user_id, course_id) VALUES (?, ?)';
-    const [result] = await db.query(query, [user_id, course_id]);
-    return result.insertId;
+
+    const purchased = await prisma.purchased.create({
+        data: {
+            userId: user_id,
+            courseId: course_id,
+        },
+    });
+    return purchased.id;
 }
 
 module.exports = {
@@ -115,5 +121,5 @@ module.exports = {
     deleteCourse,
     getCoursesByCategoryId,
     getPurchasedCoursesByUserId,
-    createPurchasedCourse
+    createPurchasedCourse,
 };
